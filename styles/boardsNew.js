@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 
 export const Wrapper = styled.div`
   width: 1200px;
-  border: 1px solid black;
+  /* height: 1847px; */
   margin: 100px;
   padding-top: 80px;
   padding-bottom: 100px;
@@ -16,7 +16,7 @@ export const Wrapper = styled.div`
 `;
 
 export const Title = styled.div`
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Aria, Helvetica, sans-serif;
   font-size: 34px;
   font-weight: bold;
 `;
@@ -126,13 +126,13 @@ export const OptionWrapper = styled.div`
 
 export const RadioButton = styled.input`
   cursor: pointer;
+  accent-color: #ffd600;
 `;
 
 export const RadioLabel = styled.label`
   margin-left: 8px;
   margin-right: 20px;
   font-weight: 500;
-  cursor: pointer;
 `;
 
 export const ButtonWrapper = styled.div`
@@ -163,6 +163,11 @@ export const SubmitButton = styled.button`
   margin-left: 12px;
   margin-right: 12px;
   cursor: pointer;
+  background-color: #ffd600;
+`;
 
-  background-color: yellow;
+export const Error = styled.div`
+    padding-top: 10px;
+    font-size: 14px;
+    color: red;
 `;
