@@ -25,19 +25,19 @@ import {
 } from "../../../styles/boardsNew";
 import { useState } from "react";
 import { useMutation, gql } from "@apollo/client";
+import { useRouter } from "next/router"
 
 const CREATE_BOARD = gql`
   mutation createBoard($createBoardInput: CreateBoardInput!) {
     createBoard(createBoardInput: $createBoardInput) {
       _id
-      writer
-      title
-      contents
     }
   }
 `;
 
 export default function BoardsNewPage() {
+  const router = useRouter();
+
   const [writer, setWriter] = useState("");
   const [password, setPassword] = useState("");
   const [title, setTitle] = useState("");
@@ -103,7 +103,7 @@ export default function BoardsNewPage() {
           }
         }
       });
-      console.log(result);
+      router.push(`/boards/${result.data.createBoard._id}`);
     }
   };
 
