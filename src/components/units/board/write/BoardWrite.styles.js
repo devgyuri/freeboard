@@ -163,7 +163,7 @@ export const SubmitButton = styled.button`
   margin-left: 12px;
   margin-right: 12px;
   cursor: pointer;
-  background-color: #ffd600;
+  background-color: ${(props) => props.isActive ? "#ffd600" : ""};
 `;
 
 export const Error = styled.div`

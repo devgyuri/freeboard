@@ -17,35 +17,61 @@ export default function BoardWrite() {
     const [titleError, setTitleError] = useState("");
     const [contentsError, setContentsError] = useState("");
 
+    const [isActive, setIsActive] = useState(false);
+
     const [createBoard] = useMutation(CREATE_BOARD);
 
     const onChangeWriter = (event) => {
         setWriter(event.target.value);
         if(event.target.value !== "") {
-        setWriterError("");
+            setWriterError("");
+        }
+
+        if(event.target.value && password && title && contents) {
+            setIsActive(true);
+        } else {
+            setIsActive(false);
         }
     };
 
     const onChangePassword = (event) => {
         setPassword(event.target.value);
         if(event.target.value !== "") {
-        setPasswordError("");
+            setPasswordError("");
+            setIsActive(false);
+        }
+
+        if(writer && event.target.value && password && contents) {
+            setIsActive(true);
+        } else {
+            setIsActive(false);
         }
     };
 
     const onChangeTitle = (event) => {
         setTitle(event.target.value);
         if(event.target.value !== "") {
-        setTitleError("");
+            setTitleError("");
+        }
+
+        if(writer && password && event.target.value && contents) {
+            setIsActive(true);
+        } else {
+            setIsActive(false);
         }
     };
 
     const onChangeContents = (event) => {
         setContents(event.target.value);
         if(event.target.value !== "") {
-        setContentsError("");
+            setContentsError("");
         }
-        console.log("contents");
+        
+        if(writer && password && title && event.target.value) {
+            setIsActive(true);
+        } else {
+            setIsActive(false);
+        }
     };
 
     const onClickSubmit = async () => {
@@ -62,21 +88,21 @@ export default function BoardWrite() {
         setContentsError("내용을 입력해주세요");
         }
         if(writer && password && title && contents) {
-        try {
-            const result = await createBoard({
-            variables: {
-                createBoardInput: {
-                writer,
-                password,
-                title,
-                contents
+            try {
+                const result = await createBoard({
+                variables: {
+                    createBoardInput: {
+                        writer,
+                        password,
+                        title,
+                        contents
+                    }
                 }
+                });
+                router.push(`/boards/${result.data.createBoard._id}`);
+            } catch(error) {
+                alert(error.message);
             }
-            });
-            router.push(`/boards/${result.data.createBoard._id}`);
-        } catch(error) {
-            alert(error.message);
-        }
         }
     };
 
@@ -91,6 +117,7 @@ export default function BoardWrite() {
             onChangeTitle={onChangeTitle}
             onChangeContents={onChangeContents}
             onClickSubmit={onClickSubmit}
+            isActive={isActive}
         />
     );
 };
