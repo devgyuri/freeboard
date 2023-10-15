@@ -26,11 +26,16 @@ export default function BoardDetail() {
         router.push("/boards");
     };
 
+    const onClickMoveToBoardEdit = () => {
+        router.push(`/boards/${router.query.boardId}/edit`);
+    };
+
     return(
         <BoardDetailUI 
             data={data}
             onClickMoveToBoardList={onClickMoveToBoardList}
             onClickDelete={onClickDelete}
+            onClickMoveToBoardEdit={onClickMoveToBoardEdit}
         />
     );
 };

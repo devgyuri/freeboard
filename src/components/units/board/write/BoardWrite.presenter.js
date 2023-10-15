@@ -4,11 +4,17 @@ export default function BoardWriteUI(props) {
 
     return (
         <S.Wrapper>
-            <S.Title>게시글 등록</S.Title>
+            <S.Title>{props.isEdit? "게시글 수정" : "게시글 등록"}</S.Title>
             <S.WriterWrapper>
                 <S.InputWrapper>
                     <S.Label>작성자</S.Label>
-                    <S.Writer type="text" placeholder="이름을 적어주세요" onChange={props.onChangeWriter} />
+                    <S.Writer
+                        type="text"
+                        placeholder="이름을 적어주세요"
+                        onChange={props.onChangeWriter}
+                        defaultValue={props.data?.fetchBoard.writer}
+                        readOnly={props.data?.fetchBoard.writer}    
+                    />
                     <S.Error>{props.writerError}</S.Error>
                 </S.InputWrapper>
                 <S.InputWrapper>
