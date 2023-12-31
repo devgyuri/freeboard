@@ -18,6 +18,8 @@ export default function BoardCommentList() {
     })
 
     const onClickDelete = async (event) => {
+        setBoardCommentId(event.target.id);
+        console.log(event.currentTarget._id);
         try {
             await deleteBoardComment({
                 variables: {

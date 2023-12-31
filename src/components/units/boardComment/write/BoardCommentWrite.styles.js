@@ -3,7 +3,7 @@ import { Rate } from "antd";
 
 export const Wrapper = styled.div`
     width: 1200px;
-    margin: 0px 100px;
+    margin: 0px 100px 40px 100px;
 `;
 
 export const TopWrapper = styled.div`
@@ -85,4 +85,8 @@ export const Button = styled.button`
     cursor: pointer;
 `;
 
-export const Star = styled(Rate)``;
+export const Star = styled(Rate)`
+    height: 24px;
+    font-size: 16px;
+    color: #fd600;
+`;

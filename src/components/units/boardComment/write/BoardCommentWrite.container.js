@@ -11,7 +11,7 @@ export default function BoardCommentWrite() {
     const [writer, setWriter] = useState("");
     const [password, setPassword] = useState("");
     const [contents, setContents] = useState("");
-    const [star, setStar] = useState("");
+    const [star, setStar] = useState(0);
 
     const [createBoardComment] = useMutation(CREATE_BOARD_COMMENT);
 
@@ -31,7 +31,7 @@ export default function BoardCommentWrite() {
         try {
             await createBoardComment({
                 variables: {
-                    createBoardInput: {
+                    createBoardCommentInput: {
                         writer,
                         password,
                         contents,

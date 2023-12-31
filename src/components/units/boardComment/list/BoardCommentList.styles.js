@@ -40,6 +40,9 @@ export const Writer = styled.div`
 
 export const Star = styled(Rate)`
     padding-left: 20px;
+    font-size: 16px;
+    height: 24px;
+    color: #ffd600;
 `;
 
 export const Contents = styled.div`
@@ -56,6 +59,7 @@ export const UpdateIcon = styled.img`
     width: 24px;
     height: 24px;
     cursor: pointer;
+    margin-right: 8px;
 `;
 
 export const DeleteIcon = styled.img`

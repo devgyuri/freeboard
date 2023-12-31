@@ -19,7 +19,10 @@ export default function BoardCommentWriteUI(props) {
                     onChange={props.onChangePassword}
                     value={props.password}
                 />
-                <S.Star />
+                <S.Star
+                    onChange={props.setStar}
+                    allowHalf
+                />
             </S.InputWrapper>
             <S.ContentsWrapper>
                 <S.Contents
