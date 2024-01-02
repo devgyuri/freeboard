@@ -5,5 +5,5 @@ export interface IBoardDetailUIProps {
     data?: Pick<IQuery, "fetchBoard">;
     onClickMoveToBoardEdit: () => void;
     onClickMoveToBoardList: () => void;
-    onClickDelete: (event: any) => void;
+    onClickDelete: (event: MouseEvent<HTMLButtonElement>) => void;
 }

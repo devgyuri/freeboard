@@ -129,20 +129,23 @@ export default function BoardWrite(props: IBoardWriteProps) {
             updateBoardInput.contents = contents;
         }
 
-        if(writer && password && title && contents) {
-            try {
-                const result = await updateBoard({
-                    variables: {
-                        boardId: router.query.boardId,
-                        password,
-                        updateBoardInput
-                    }
-                });
-                router.push(`/boards/${result.data.updateBoard._id}`);
-            } catch(error) {
-                if(error instanceof Error) {
-                    alert(error.message);
+    
+        try {
+            if(typeof router.query.boardId !== "string") {
+                alert("시스템에 문제가 있습니다");
+                return;
+            }
+            const result = await updateBoard({
+                variables: {
+                    boardId: router.query.boardId,
+                    password,
+                    updateBoardInput
                 }
+            });
+            router.push(`/boards/${result.data.updateBoard._id}`);
+        } catch(error) {
+            if(error instanceof Error) {
+                alert(error.message);
             }
         }
     };

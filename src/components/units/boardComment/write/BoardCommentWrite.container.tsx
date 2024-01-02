@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import BoardCommentWriteUI from "./BoardCommentWrite.presenter";
 import { FETCH_BOARD_COMMENTS } from "../list/BoardCommentList.queries";
 import { CREATE_BOARD_COMMENT } from "./BoardCommentWrite.queries";
@@ -15,15 +15,15 @@ export default function BoardCommentWrite() {
 
     const [createBoardComment] = useMutation(CREATE_BOARD_COMMENT);
 
-    const onChangeWriter = (event) => {
+    const onChangeWriter = (event: ChangeEvent<HTMLInputElement>) => {
         setWriter(event.target.value);
     };
 
-    const onChangePassword = (event) => {
+    const onChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
     };
 
-    const onChangeContents = (event) => {
+    const onChangeContents = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setContents(event.target.value);
     };
 
@@ -47,7 +47,9 @@ export default function BoardCommentWrite() {
                 }]
             });
         } catch(error) {
-            alert(error.message);
+            if(error instanceof Error) {
+                alert(error.message);
+            }
         }
 
         setWriter("");
@@ -61,10 +63,8 @@ export default function BoardCommentWrite() {
             onChangePassword={onChangePassword}
             onChangeContents={onChangeContents}
             onClickWrite={onClickWrite}
-            writer={writer}
-            password={password}
-            contents={contents}
             setStar={setStar}
+            contents={contents}
         />
     );
 };

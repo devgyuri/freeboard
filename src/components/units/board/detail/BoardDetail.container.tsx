@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import BoardDetailUI from "./BoardDetail.presenter";
 import { FETCH_BOARD, DELETE_BOARD } from "./BoardDetail.queries";
-import { IQuery, IQueryFetchBoardArgs } from "../../../../commons/types/generated/types";
+import { IQuery, IQueryFetchBoardArgs, IMutation, IMutationDeleteBoardArgs } from "../../../../commons/types/generated/types";
 import { MouseEvent } from "react";
 
 export default function BoardDetail() {
@@ -16,13 +16,16 @@ export default function BoardDetail() {
             boardId: router.query.boardId
         }
     });
-    const [deleteBoard] = useMutation(DELETE_BOARD);
+    const [deleteBoard] = useMutation<Pick<IMutation, "deleteBoard">, IMutationDeleteBoardArgs>(DELETE_BOARD);
 
     const onClickMoveToBoardList = () => {
         router.push("/boards")
     };
 
-    const onClickDelete = (event: any) => {
+    const onClickDelete = (event: MouseEvent<HTMLButtonElement>) => {
+        if(!(event.target instanceof HTMLButtonElement)) {
+            return;
+        }
         deleteBoard({
             variables: {
                 boardId: event.target.id
