@@ -5,25 +5,41 @@ import { useRouter } from "next/router";
 import BoardWriteUI from "./BoardWrite.presenter";
 import { CREATE_BOARD, UPDATE_BOARD } from "./BoardWrite.queries";
 import type { IBoardWriteProps } from "./BoardWrite.types";
-import type { IUpdateBoardInput } from "../../../../commons/types/generated/types";
+import type {
+  IUpdateBoardInput,
+  IMutation,
+  IMutationCreateBoardArgs,
+  IMutationUpdateBoardArgs,
+} from "../../../../commons/types/generated/types";
+import type { Address } from "react-daum-postcode";
 
 export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
   const router = useRouter();
+  const [isActive, setIsActive] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [writer, setWriter] = useState("");
   const [password, setPassword] = useState("");
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [zipcode, setZipcode] = useState("");
+  const [address, setAddress] = useState("");
+  const [addressDetail, setAddressDetail] = useState("");
 
   const [writerError, setWriterError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [titleError, setTitleError] = useState("");
   const [contentsError, setContentsError] = useState("");
 
-  const [isActive, setIsActive] = useState(false);
-
-  const [createBoard] = useMutation(CREATE_BOARD);
-  const [updateBoard] = useMutation(UPDATE_BOARD);
+  const [createBoard] = useMutation<
+    Pick<IMutation, "createBoard">,
+    IMutationCreateBoardArgs
+  >(CREATE_BOARD);
+  const [updateBoard] = useMutation<
+    Pick<IMutation, "updateBoard">,
+    IMutationUpdateBoardArgs
+  >(UPDATE_BOARD);
 
   const onChangeWriter = (event: ChangeEvent<HTMLInputElement>): void => {
     setWriter(event.target.value);
@@ -98,6 +114,26 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
     }
   };
 
+  const onChangeYoutubeUrl = (event: ChangeEvent<HTMLInputElement>): void => {
+    setYoutubeUrl(event.target.value);
+  };
+
+  const onChangeAddressDetail = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setAddressDetail(event.target.value);
+  };
+
+  const onClickAddressSearch = (): void => {
+    setIsOpen((prev) => !prev);
+  };
+
+  const onCompleteAddressSearch = (data: Address): void => {
+    setAddress(data.address);
+    setZipcode(data.zonecode);
+    setIsOpen((prev) => !prev);
+  };
+
   const onClickSubmit = async (): Promise<void> => {
     if (writer === "") {
       setWriterError("작성자를 입력해주세요");
@@ -120,9 +156,21 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
               password,
               title,
               contents,
+              youtubeUrl,
+              boardAddress: {
+                zipcode,
+                address,
+                addressDetail,
+              },
             },
           },
         });
+
+        if (result.data?.createBoard._id === undefined) {
+          alert("요청에 문제가 있습니다");
+          return;
+        }
+
         void router.push(`/boards/${result.data.createBoard._id}`);
       } catch (error) {
         if (error instanceof Error) {
@@ -133,7 +181,14 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
   };
 
   const onClickUpdate = async (): Promise<void> => {
-    if (title === "" && contents === "") {
+    if (
+      title === "" &&
+      contents === "" &&
+      youtubeUrl === "" &&
+      address === "" &&
+      addressDetail === "" &&
+      zipcode === ""
+    ) {
       alert("수정한 내용이 없습니다");
       return;
     }
@@ -149,6 +204,21 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
     if (contents !== "") {
       updateBoardInput.contents = contents;
     }
+    if (youtubeUrl !== "") {
+      updateBoardInput.youtubeUrl = youtubeUrl;
+    }
+    if (zipcode !== "" || address !== "" || addressDetail !== "") {
+      updateBoardInput.boardAddress = {};
+      if (zipcode !== "") {
+        updateBoardInput.boardAddress.zipcode = zipcode;
+      }
+      if (address !== "") {
+        updateBoardInput.boardAddress.address = address;
+      }
+      if (addressDetail !== "") {
+        updateBoardInput.boardAddress.addressDetail = addressDetail;
+      }
+    }
 
     try {
       if (typeof router.query.boardId !== "string") {
@@ -162,6 +232,12 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
           updateBoardInput,
         },
       });
+
+      if (result.data?.updateBoard._id === undefined) {
+        alert("요청에 문제가 있습니다");
+        return;
+      }
+
       void router.push(`/boards/${result.data.updateBoard._id}`);
     } catch (error) {
       if (error instanceof Error) {
@@ -180,11 +256,18 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
       onChangePassword={onChangePassword}
       onChangeTitle={onChangeTitle}
       onChangeContents={onChangeContents}
+      onChangeYoutubeUrl={onChangeYoutubeUrl}
+      onChangeAddressDetail={onChangeAddressDetail}
+      onClickAddressSearch={onClickAddressSearch}
+      onCompleteAddressSearch={onCompleteAddressSearch}
       onClickSubmit={onClickSubmit}
       onClickUpdate={onClickUpdate}
       isActive={isActive}
       isEdit={props.isEdit}
       data={props.data}
+      isOpen={isOpen}
+      zipcode={zipcode}
+      address={address}
     />
   );
 }
