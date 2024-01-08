@@ -7,4 +7,7 @@ export interface IBoardCommentWriteUIProps {
   onClickWrite: () => void;
   setStar: Dispatch<SetStateAction<number>>;
   contents: string;
+  writer: string;
+  password: string;
+  star: number;
 }

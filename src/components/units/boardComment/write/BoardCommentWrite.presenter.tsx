@@ -11,13 +11,18 @@ export default function BoardCommentWriteUI(
         <S.Label>댓글</S.Label>
       </S.TopWrapper>
       <S.InputWrapper>
-        <S.Input placeholder="작성자" onChange={props.onChangeWriter} />
+        <S.Input
+          placeholder="작성자"
+          onChange={props.onChangeWriter}
+          value={props.writer}
+        />
         <S.Input
           type="password"
           placeholder="비밀번호"
           onChange={props.onChangePassword}
+          value={props.password}
         />
-        <S.Star onChange={props.setStar} allowHalf />
+        <S.Star value={props.star} onChange={props.setStar} allowHalf />
       </S.InputWrapper>
       <S.ContentsWrapper>
         <S.Contents

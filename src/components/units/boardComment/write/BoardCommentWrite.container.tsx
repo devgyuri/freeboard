@@ -58,6 +58,7 @@ export default function BoardCommentWrite(): JSX.Element {
     setWriter("");
     setPassword("");
     setContents("");
+    setStar(0);
   };
 
   return (
@@ -68,6 +69,9 @@ export default function BoardCommentWrite(): JSX.Element {
       onClickWrite={onClickWrite}
       setStar={setStar}
       contents={contents}
+      writer={writer}
+      password={password}
+      star={star}
     />
   );
 }
