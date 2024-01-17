@@ -4,9 +4,21 @@ import type { ChangeEvent } from "react";
 import { useState } from "react";
 import BoardCommentWriteUI from "./BoardCommentWrite.presenter";
 import { FETCH_BOARD_COMMENTS } from "../list/BoardCommentList.queries";
-import { CREATE_BOARD_COMMENT } from "./BoardCommentWrite.queries";
+import {
+  CREATE_BOARD_COMMENT,
+  UPDATE_BOARD_COMMENT,
+} from "./BoardCommentWrite.queries";
+import type { IBoardCommentWrite } from "./BoardCommentWrite.types";
+import type {
+  IMutation,
+  IMutationCreateBoardCommentArgs,
+  IMutationUpdateBoardCommentArgs,
+  IUpdateBoardCommentInput,
+} from "../../../../commons/types/generated/types";
 
-export default function BoardCommentWrite(): JSX.Element {
+export default function BoardCommentWrite(
+  props: IBoardCommentWrite,
+): JSX.Element {
   const router = useRouter();
 
   const [writer, setWriter] = useState("");
@@ -14,7 +26,14 @@ export default function BoardCommentWrite(): JSX.Element {
   const [contents, setContents] = useState("");
   const [star, setStar] = useState(0);
 
-  const [createBoardComment] = useMutation(CREATE_BOARD_COMMENT);
+  const [createBoardComment] = useMutation<
+    Pick<IMutation, "createBoardComment">,
+    IMutationCreateBoardCommentArgs
+  >(CREATE_BOARD_COMMENT);
+  const [updateBoardComment] = useMutation<
+    Pick<IMutation, "updateBoardComment">,
+    IMutationUpdateBoardCommentArgs
+  >(UPDATE_BOARD_COMMENT);
 
   const onChangeWriter = (event: ChangeEvent<HTMLInputElement>): void => {
     setWriter(event.target.value);
@@ -30,6 +49,11 @@ export default function BoardCommentWrite(): JSX.Element {
 
   const onClickWrite = async (): Promise<void> => {
     try {
+      if (typeof router.query.boardId !== "string") {
+        alert("시스템에 문제가 있습니다.");
+        return;
+      }
+
       await createBoardComment({
         variables: {
           createBoardCommentInput: {
@@ -61,17 +85,64 @@ export default function BoardCommentWrite(): JSX.Element {
     setStar(0);
   };
 
+  const onClickUpdate = async (): Promise<void> => {
+    if (contents === "") {
+      alert("내용이 수정되지 않았습니다.");
+      return;
+    }
+    if (password === "") {
+      alert("비밀번호가 입력되지 않았습니다.");
+      return;
+    }
+
+    try {
+      const updateBoardCommentInput: IUpdateBoardCommentInput = {};
+      if (contents !== "") {
+        updateBoardCommentInput.contents = contents;
+      }
+      if (star !== props.el?.rating) {
+        updateBoardCommentInput.rating = star;
+      }
+
+      if (typeof props.el?._id !== "string") {
+        alert("시스템에 문제가 있습니다.");
+        return;
+      }
+      await updateBoardComment({
+        variables: {
+          updateBoardCommentInput,
+          password,
+          boardCommentId: props.el?._id,
+        },
+        refetchQueries: [
+          {
+            query: FETCH_BOARD_COMMENTS,
+            variables: { boardId: router.query.boardId },
+          },
+        ],
+      });
+      props.setIsEdit?.(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    }
+  };
+
   return (
     <BoardCommentWriteUI
       onChangeWriter={onChangeWriter}
       onChangePassword={onChangePassword}
       onChangeContents={onChangeContents}
       onClickWrite={onClickWrite}
+      onClickUpdate={onClickUpdate}
       setStar={setStar}
       contents={contents}
       writer={writer}
       password={password}
       star={star}
+      isEdit={props.isEdit}
+      el={props.el}
     />
   );
 }

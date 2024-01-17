@@ -139,13 +139,13 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
       setWriterError("작성자를 입력해주세요");
     }
     if (password === "") {
-      setPasswordError("비밀번호를 입력해주세요");
+      setPasswordError("비밀번호를 입력해주세요.");
     }
     if (title === "") {
-      setTitleError("제목을 입력해주세요");
+      setTitleError("제목을 입력해주세요.");
     }
     if (contents === "") {
-      setContentsError("내용을 입력해주세요");
+      setContentsError("내용을 입력해주세요.");
     }
     if (writer !== "" && password !== "" && title !== "" && contents !== "") {
       try {
@@ -167,7 +167,7 @@ export default function BoardWrite(props: IBoardWriteProps): JSX.Element {
         });
 
         if (result.data?.createBoard._id === undefined) {
-          alert("요청에 문제가 있습니다");
+          alert("요청에 문제가 있습니다.");
           return;
         }
 

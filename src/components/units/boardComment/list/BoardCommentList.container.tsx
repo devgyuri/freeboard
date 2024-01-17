@@ -1,17 +1,11 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import BoardCommentListUI from "./BoardCommentList.presenter";
-import {
-  DELETE_BOARD_COMMENT,
-  FETCH_BOARD_COMMENTS,
-} from "./BoardCommentList.queries";
+import { FETCH_BOARD_COMMENTS } from "./BoardCommentList.queries";
 import type {
-  IMutation,
-  IMutationDeleteBoardCommentArgs,
   IQuery,
   IQueryFetchBoardCommentsArgs,
 } from "../../../../commons/types/generated/types";
-import { useState, type ChangeEvent, type MouseEvent } from "react";
 
 export default function BoardCommentList(): JSX.Element {
   const router = useRouter();
@@ -19,16 +13,7 @@ export default function BoardCommentList(): JSX.Element {
     return <></>;
   }
 
-  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
-  const [boardCommentId, setBoardCommentId] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [deleteBoardComment] = useMutation<
-    Pick<IMutation, "deleteBoardComment">,
-    IMutationDeleteBoardCommentArgs
-  >(DELETE_BOARD_COMMENT);
-
-  const { data } = useQuery<
+  const { data, fetchMore } = useQuery<
     Pick<IQuery, "fetchBoardComments">,
     IQueryFetchBoardCommentsArgs
   >(FETCH_BOARD_COMMENTS, {
@@ -37,57 +22,29 @@ export default function BoardCommentList(): JSX.Element {
     },
   });
 
-  const onClickDelete = async (
-    event: MouseEvent<HTMLButtonElement>,
-  ): Promise<void> => {
-    try {
-      await deleteBoardComment({
-        variables: {
-          password,
-          boardCommentId,
-        },
-        refetchQueries: [
-          {
-            query: FETCH_BOARD_COMMENTS,
-            variables: {
-              boardId: router.query.boardId,
-            },
-          },
-        ],
-      });
-      setIsOpenDeleteModal(false);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
+  const onLoadMore = (): void => {
+    if (data === undefined) {
+      return;
     }
+
+    void fetchMore({
+      variables: { page: Math.ceil(data?.fetchBoardComments.length / 10) + 1 },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (fetchMoreResult?.fetchBoardComments === undefined) {
+          return {
+            fetchBoardComments: [...prev.fetchBoardComments],
+          };
+        }
+
+        return {
+          fetchBoardComments: [
+            ...prev.fetchBoardComments,
+            ...fetchMoreResult.fetchBoardComments,
+          ],
+        };
+      },
+    });
   };
 
-  const onClickDeleteCancel = (event: MouseEvent<HTMLButtonElement>): void => {
-    setIsOpenDeleteModal(false);
-  };
-
-  const onClickOpenDeleteModal = (
-    event: MouseEvent<HTMLImageElement>,
-  ): void => {
-    setBoardCommentId(event.currentTarget.id);
-    setIsOpenDeleteModal(true);
-  };
-
-  const onChangeDeletePassword = (
-    event: ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setPassword(event.target.value);
-  };
-
-  return (
-    <BoardCommentListUI
-      data={data}
-      onClickDelete={onClickDelete}
-      isOpenDeleteModal={isOpenDeleteModal}
-      onClickOpenDeleteModal={onClickOpenDeleteModal}
-      onChangeDeletePassword={onChangeDeletePassword}
-      onClickDeleteCancel={onClickDeleteCancel}
-    />
-  );
+  return <BoardCommentListUI data={data} onLoadMore={onLoadMore} />;
 }

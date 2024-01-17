@@ -80,4 +80,5 @@ export const PasswordModal = styled(Modal)``;
 export const PasswordInput = styled.input`
   width: 100%;
   margin-top: 10px;
+  padding: 10px;
 `;
