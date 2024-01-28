@@ -1,4 +1,4 @@
-import * as S from "./MyfirebaseList.styles";
+import * as S from "./MyFirebaseList.styles";
 import type { IMyFirebaseListUIProps } from "./MyFirebaseList.types";
 import { v4 as uuidv4 } from "uuid";
 

@@ -133,3 +133,13 @@ export const LinkIcon = styled.img`
   height: 32px;
   margin-right: 10px;
 `;
+
+export const ImageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Image = styled.img`
+  width: 996px;
+  margin-bottom: 30px;
+`;
