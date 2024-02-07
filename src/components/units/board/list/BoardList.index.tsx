@@ -1,19 +1,28 @@
+import { useMoveToPage } from "../../../commons/hooks/customs/useMoveToPage";
+import { useSearch } from "../../../commons/hooks/customs/useSearch";
+import { useQueryFetchBoards } from "../../../commons/hooks/queries/useQueryFetchBoards";
+import { useQueryFetchBoardsCount } from "../../../commons/hooks/queries/useQueryFetchBoardsCount";
 import { getDate } from "../../../../commons/libraries/utils";
 import Paginations from "../../../commons/pagination/Paginations.container";
 import Searchbar from "../../../commons/searchbars/Searchbars.container";
 import * as S from "./BoardList.styles";
-import type { IBoardListUIProps } from "./BoardList.types";
 import { v4 as uuidv4 } from "uuid";
 
 const SECRET = "@#$%^";
 
-export default function BoardListUI(props: IBoardListUIProps): JSX.Element {
+export default function BoardList(): JSX.Element {
+  const { keyword, onChangeKeyword } = useSearch();
+  const { onClickMoveToPage } = useMoveToPage();
+  const { data, refetch } = useQueryFetchBoards();
+  const { data: dataBoardsCount, refetch: refetchBoardsCount } =
+    useQueryFetchBoardsCount();
+
   return (
     <S.Wrapper>
       <Searchbar
-        refetch={props.refetch}
-        refetchBoardsCount={props.refetchBoardsCount}
-        onChangeKeyword={props.onChangeKeyword}
+        refetch={refetch}
+        refetchBoardsCount={refetchBoardsCount}
+        onChangeKeyword={onChangeKeyword}
       />
       <S.TableTop />
       <S.Row>
@@ -22,17 +31,17 @@ export default function BoardListUI(props: IBoardListUIProps): JSX.Element {
         <S.ColumnHeaderBasic>작성자</S.ColumnHeaderBasic>
         <S.ColumnHeaderBasic>날짜</S.ColumnHeaderBasic>
       </S.Row>
-      {props.data?.fetchBoards.map((el) => (
+      {data?.fetchBoards.map((el) => (
         <S.Row key={el._id}>
           <S.ColumnBasic>
             {String(el._id).slice(-4).toUpperCase()}
           </S.ColumnBasic>
-          <S.ColumnTitle id={el._id} onClick={props.onClickMoveToBoardDetail}>
+          <S.ColumnTitle onClick={onClickMoveToPage(`/boards/${el._id}`)}>
             {el.title
-              .replaceAll(props.keyword, `${SECRET}${props.keyword}${SECRET}`)
+              .replaceAll(keyword, `${SECRET}${keyword}${SECRET}`)
               .split(SECRET)
               .map((el) => (
-                <S.TextToken key={uuidv4()} isMatched={props.keyword === el}>
+                <S.TextToken key={uuidv4()} isMatched={keyword === el}>
                   {el}
                 </S.TextToken>
               ))}
@@ -45,8 +54,11 @@ export default function BoardListUI(props: IBoardListUIProps): JSX.Element {
       ))}
       <S.TableBottom />
       <S.Footer>
-        <Paginations refetch={props.refetch} count={props.count} />
-        <S.Button onClick={props.onClickMoveToBoardNew}>
+        <Paginations
+          refetch={refetch}
+          count={dataBoardsCount?.fetchBoardsCount}
+        />
+        <S.Button onClick={onClickMoveToPage("/boards/new")}>
           <S.PencilIcon src="/images/board/list/write.png" />
           게시물 등록하기
         </S.Button>
