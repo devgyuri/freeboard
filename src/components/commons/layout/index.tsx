@@ -1,6 +1,6 @@
-import LayoutBanner from "./banner/LayoutBanner.container";
-import LayoutHeader from "./header/LayoutHeader.container";
-import LayoutNavigation from "./navigation/LayoutNavigation.container";
+import LayoutBanner from "./banner/LayoutBanner.index";
+import LayoutHeader from "./header/LayoutHeader.index";
+import LayoutNavigation from "./navigation/LayoutNavigation.index";
 import styled from "@emotion/styled";
 
 const Body = styled.div`

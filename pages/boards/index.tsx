@@ -1,5 +1,12 @@
-import BoardList from "../../src/components/units/board/list/BoardList.index";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function BoardsListPage(): JSX.Element {
-  return <BoardList />;
+  const router = useRouter();
+
+  useEffect(() => {
+    void router.push("/boards");
+  }, []);
+
+  return <></>;
 }

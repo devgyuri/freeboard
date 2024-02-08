@@ -1,5 +1,5 @@
-import BoardWrite from "../../../src/components/units/board/write/BoardWrite.container";
+import BoardList from "../../../src/components/units/board/list/BoardList.index";
 
 export default function BoardsNewPage(): JSX.Element {
-  return <BoardWrite isEdit={false} />;
+  return <BoardList />;
 }
